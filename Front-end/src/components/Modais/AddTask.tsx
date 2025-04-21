@@ -24,7 +24,7 @@ type FormData = z.infer<typeof schema>
 function AddTask({ isOpen, setIsOpen }: StateProps) {
 
     const { thema } = useThema();
-    const { setFetch, tasks } = useTask();
+    const { dispath, tasks } = useTask();
 
     const [msgErro, setMsgErro] = useState('');
 
@@ -68,7 +68,7 @@ function AddTask({ isOpen, setIsOpen }: StateProps) {
                 setMsgErro(err.response.message);
             }
         }
-        setFetch(true);
+        dispath({type: 'setFetch', payload: true })
     }
 
     return (
@@ -123,7 +123,7 @@ function AddTask({ isOpen, setIsOpen }: StateProps) {
                         {...register('dt_limit')}
                     />
                     {
-                        errors.description && <p className="text-red-600 pl-2 my-1"> *
+                        errors.dt_limit && <p className="text-red-600 pl-2 my-1"> *
                             {errors.dt_limit?.message}</p>
                     }
                     {

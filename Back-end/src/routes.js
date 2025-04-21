@@ -9,17 +9,24 @@ routes.get('/', (req,res) => {
     res.status(200).json({message: 'Raiz do sistema acessada'})
 })
 
+// Login
 routes.post('/cadastrar', UserController.create);
 routes.post('/login', UserController.Login);
 
-
+// GET
 routes.get('/tasks', auth ,TaskController.getAll);
 routes.get('/tasks/user/:id', auth, TaskController.updateStatusByDt, TaskController.getTaskByUserId);
 routes.get('/tasks/id/:id', TaskController.getById);
 routes.get('/tasks/title/:title', TaskController.getByTitle);
-routes.get('/tasks/user/:id/filter',auth, TaskController.getFilterTask);
-routes.post('/tasks', TaskController.create);
+routes.get('/tasks/user/:id/filter',auth, TaskController.updateStatusByDt, TaskController.getFilterTask);
+
+// Created
+routes.post('/tasks',TaskController.updateStatusByDt, TaskController.create);
+
+// Updated
 routes.put('/tasks/:id', TaskController.update);
+
+// Delete
 routes.delete('/tasks/:id', TaskController.delete);
 
 export default routes

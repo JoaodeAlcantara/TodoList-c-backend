@@ -19,7 +19,7 @@ type FormData = z.infer<typeof schema>;
 function EditTask() {
 
     const { thema } = useThema();
-    const { setFetch, saveTaskEdit, setIsOpenEdit, isOpenEdit, setIdTask } = useTask();
+    const { dispath, editTask, setEditTaskIsOpen, editTaskIsOpen } = useTask();
 
     const [msgErro, setMsgErro] = useState('');
 
@@ -27,9 +27,9 @@ function EditTask() {
         resolver: zodResolver(schema),
         mode: "onChange",
         defaultValues: {
-            title: saveTaskEdit?.title,
-            description: saveTaskEdit?.description,
-            dt_limit: saveTaskEdit?.dt_limit
+            title: editTask?.title,
+            description: editTask?.description,
+            dt_limit: editTask?.dt_limit
         }
     });
 
@@ -44,14 +44,14 @@ function EditTask() {
                 return
             }
 
-            if (saveTaskEdit?.status === 'pendente' && dataLimite > dataAtual && dataLimite != new Date(saveTaskEdit.dt_limit)) {
-                await api.put(`/tasks/${saveTaskEdit?.id}`, { ...data, status: 'progresso' });
+            if (editTask?.status === 'pendente' && dataLimite > dataAtual && dataLimite != new Date(editTask.dt_limit)) {
+                await api.put(`/tasks/${editTask?.id}`, { ...data, status: 'progresso' });
             } else {
-                await api.put(`/tasks/${saveTaskEdit?.id}`, data);
+                await api.put(`/tasks/${editTask?.id}`, data);
             }
 
             setMsgErro('');
-            setIsOpenEdit(false);
+            setEditTaskIsOpen(false);
 
             toast.success('Tarefa editada com sucesso!', {
                 containerId: 'edit',
@@ -68,25 +68,25 @@ function EditTask() {
                 setMsgErro(err.response.message);
             }
         }
-        setFetch(true);
-        if(saveTaskEdit) setIdTask(saveTaskEdit?.id);
+        dispath({type: 'setFetch', payload: true})
+        if(editTask) dispath({type: 'setUpdatedTask', payload: editTask})
     }
 
     return (
         <>
-            {isOpenEdit &&
+            {editTaskIsOpen &&
                 <div
                     className="fixed inset-0 bg-black/30 z-60"
-                    onClick={() => setIsOpenEdit(!isOpenEdit)}
+                    onClick={() => setEditTaskIsOpen(false)}
                 ></div>
             }
 
             <div className={`w-full flex flex-col sm:w-2/3 lg:w-1/3 h-screen fixed z-60 right-0 top-0 p-2 sm:p-10 shadow-2xl
             border-l-1 transition-all duration-300 ${thema == 'dark' ? 'bg-gray-950' : 'border-zinc-50 bg-zinc-50'}
-            ${isOpenEdit ? 'translate-x-0' : 'translate-x-full'}
+            ${editTaskIsOpen ? 'translate-x-0' : 'translate-x-full'}
             `}>
                 <i
-                    onClick={() => setIsOpenEdit(!isOpenEdit)}
+                    onClick={() => setEditTaskIsOpen(false)}
                     className={`fa-solid fa-x cursor-pointer ${thema == 'dark' ? 'text-white' : 'text-black'}`}>
                 </i>
                 <h1 className={`${thema == 'dark' ? 'text-white' : 'text-black'} text-2xl text-center font-medium`}>

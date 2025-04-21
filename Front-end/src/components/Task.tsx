@@ -1,9 +1,8 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import Menu from "./Modais/Menu";
 import { useThema } from "../context/ThemeContext";
 import api from "../services/api";
 import { useTask } from "../context/taskContext";
-
 
 interface TaskProps {
     task: {
@@ -13,18 +12,19 @@ interface TaskProps {
         status: string,
         dt_limit: string
     }
-    setFetch: React.Dispatch<SetStateAction<boolean>>;
     handleDelete: (id: string) => void;
 }
 
-function Task({ task, setFetch, handleDelete }: TaskProps) {
+function Task({ task, handleDelete }: TaskProps) {
+
+    const { thema } = useThema();
+    const { dispath, tasks } = useTask();
+    const [openMenu, setOpenMenu] = useState(false);
 
     const checked = task.status === 'progresso' || task.status === 'pendente' ? false : true;
-    const dateFormated = new Date(task.dt_limit + "T23:59:59").toLocaleDateString('pt-BR')
-    const [openMenu, setOpenMenu] = useState(false);
-    const { thema } = useThema();
-    const { setIdTask } = useTask();
 
+    const dateFormated = new Date(task.dt_limit + "T23:59:59").toLocaleDateString('pt-BR')
+    
     async function handleChecked(id: string) {
         if (task.status === 'pendente') return;
 
@@ -32,14 +32,15 @@ function Task({ task, setFetch, handleDelete }: TaskProps) {
 
         if(new Date(task.dt_limit + "T23:59:59") < today && task.status === 'concluida') return;
 
-        setIdTask(id);
+
+        const taskUpdate = tasks.find(item => item.id === id)
+        dispath({type: 'setUpdatedTask', payload: taskUpdate });
+
         const status = checked ? 'progresso' : 'concluida';
         await api.put(`/tasks/${id}`, { status });
 
-        setFetch(true)
+        dispath({type: 'setFetch', payload: true})
     }
-
-    
 
     return (
         <>

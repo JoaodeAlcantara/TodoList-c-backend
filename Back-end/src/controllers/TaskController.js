@@ -2,7 +2,7 @@ import TaskRepository from "../repositories/TaskRepository.js";
 
 const TaskController = {
     create: async (req, res) => {
-        const { title, description, dt_limit, user } = req.body;
+        const { title, description, status, dt_limit, user } = req.body;
 
         if (!title) return res.status(400).json({ message: 'O campo titulo é obrigatório' });
         if (!description) return res.status(400).json({ message: 'O campo descrição é obrigatório' });
@@ -17,7 +17,7 @@ const TaskController = {
         })
 
         try {
-            const newTask = await TaskRepository.create({ title, description, dt_limit, user_id: parseInt(user) })
+            const newTask = await TaskRepository.create({ title, description, status, dt_limit, user_id: parseInt(user) })
 
             if (newTask) return res.status(201).json({
                 status: 201,
@@ -66,7 +66,7 @@ const TaskController = {
     },
     getByTitle: async (req, res) => {
         const title = req.params.title
-        const task = await TaskRepository.getById(title);
+        const task = await TaskRepository.getByTitle(title);
 
         if (task) return res.status(200).json(task);
 

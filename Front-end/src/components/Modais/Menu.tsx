@@ -1,5 +1,6 @@
 import { useThema } from "../../context/ThemeContext";
 import { useTask } from "../../context/taskContext";
+import EditTask from "./EditTask";
 
 interface TaskData {
     id: string,
@@ -19,11 +20,11 @@ interface stateProps {
 function Menu({ openMenu, setOpenMenu, task, handleDelete }: stateProps) {
 
     const { thema } = useThema();
-    const { setSaveTaskEdit, setIsOpenEdit } = useTask();
+    const { dispath, setEditTaskIsOpen } = useTask();
 
     function openSaveEdit(task: TaskData) {
-        setSaveTaskEdit(task);
-        setIsOpenEdit(true);
+        dispath({type: 'setEditTask', payload: task});
+        setEditTaskIsOpen(true);
         setOpenMenu(false);
     }
 
@@ -41,7 +42,8 @@ function Menu({ openMenu, setOpenMenu, task, handleDelete }: stateProps) {
             absolute z-40 flex flex-col gap-4 right-7 -top-5 bg-zinc-70 px-4 py-2 border-1 rounded-lg w-30  shadow-lg `}>
 
                 <p className="flex items-center gap-2 hover:bg-blue-600/60 duration-200 p-2 rounded-lg cursor-pointer"
-                    onClick={() => openSaveEdit(task)}
+                    onClick={() => 
+                        openSaveEdit(task)}
                 >
                     <i className="fa-solid fa-pen"></i>
                     Editar

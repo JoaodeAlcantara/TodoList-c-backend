@@ -12,7 +12,7 @@ function Home() {
 
     const [isOpen, setIsOpen] = useState(false);
     const { thema } = useThema();
-    const { isOpenEdit } = useTask()
+    const { editTaskIsOpen } = useTask()
 
     return (
         <div className={`w-full flex flex-col items-center justify-center 
@@ -22,7 +22,7 @@ function Home() {
             <main className='w-full min-h-[90vh] flex flex-col'>
                 <FilterTask />
                 <AddTask isOpen={isOpen} setIsOpen={setIsOpen} />
-                {isOpenEdit && <EditTask />}
+                {editTaskIsOpen && <EditTask />}
                 <TodoList />
 
                 <ToastContainer containerId={'edit'} />

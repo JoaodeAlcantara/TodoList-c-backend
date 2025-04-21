@@ -6,15 +6,23 @@ import api from "../services/api";
 import { toast } from 'react-toastify';
 
 function TodoList() {
-
-    const { fetch, setFetch, getTask, tasks, loader } = useTask();
-
+    const { tasks, fetch, loader, dispath, fetching } = useTask();
     const { thema } = useThema();
 
-    async function handleDelete(id: string) {
+    useEffect(() => {
+        fetching();
+    }, []);
 
+    useEffect(() => {
+        if (fetch) {
+            fetching();
+        }
+        dispath({ type: 'setFetch', payload: false });
+    }, [fetch]);
+
+    async function handleDelete(id: string) {
         const deleteTask = tasks.find(item => item.id === id);
-        const userId = localStorage.getItem('id')
+        const userId = localStorage.getItem('id');
 
         if (!deleteTask) return console.log('falha');
 
@@ -23,19 +31,21 @@ function TodoList() {
             title: deleteTask.title,
             description: deleteTask.description,
             dt_limit: deleteTask.dt_limit,
+            status: deleteTask.status,
             user: userId
         }
 
         await api.delete(`tasks/${id}`);
-        setFetch(true);
+        dispath({ type: 'setFetch', payload: true });
 
         const undoToast = toast.info(
             <div className="flex items-center gap-4">
                 <span className="cursor-default">Tarefa deletada!</span>
                 <button className="font-bold border-l-2 px-2 cursor-pointer"
-                    onClick={ async () => {
+                    onClick={async () => {
+                        console.log(task)
                         await api.post('/tasks', task);
-                        setFetch(true)
+                        dispath({ type: 'setFetch', payload: true });
                         toast.dismiss(undoToast);
                     }}
                 >
@@ -55,18 +65,6 @@ function TodoList() {
         );
     };
 
-    useEffect(() => {
-        getTask()
-    }, []);
-
-    useEffect(() => {
-        if (fetch) {
-            getTask();
-        }
-
-        setFetch(false);
-    }, [fetch]);
-
     return (
         <section className='flex flex-col gap-4 w-full my-5 sm:px-30 px-5'>
             {loader ?
@@ -78,7 +76,7 @@ function TodoList() {
                 :
                 tasks && tasks.length > 0 ?
                     tasks.map(task =>
-                        <Task key={task.id} task={task} setFetch={setFetch} handleDelete={handleDelete} />
+                        <Task key={task.id} task={task} handleDelete={handleDelete} />
                     )
                     :
                     <p className={`${thema === 'dark' ? 'text-white' : 'text-black'} 
