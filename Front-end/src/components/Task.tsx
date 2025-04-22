@@ -47,12 +47,12 @@ function Task({ task, handleDelete }: TaskProps) {
             <div
                 className={`${thema == 'dark' ? 'bg-gray-900' : 'bg-zinc-50  border-zinc-200'} relative border-1 rounded-lg shadow p-4`}
             >
-
                 {
                     openMenu && (
                         <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} handleDelete={handleDelete} task={task} />
                     )
                 }
+                
                 <div className="flex flex-col sm:flex-row justify-between">
                     <h1 className={`text-2xl font-medium break-all
                     ${thema == 'dark' ? checked ? 'line-through text-zinc-400' : 'text-white' : checked ? 'line-through text-zinc-600' : 'text-black'} 
@@ -117,7 +117,7 @@ function Task({ task, handleDelete }: TaskProps) {
                         }
                     </button>
                 </div>
-            </div >
+            </div>
         </>
     )
 }
